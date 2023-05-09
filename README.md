@@ -5,9 +5,9 @@
 adapt from Source code for "Is YouTube Channel Monetized?" extension.
 
 
-add  more browser support
-skip youtube preminuim plan user
-support in youtube video page
+*  add  more browser support
+* skip youtube preminuim plan user
+* support in youtube video page
 
 
 
