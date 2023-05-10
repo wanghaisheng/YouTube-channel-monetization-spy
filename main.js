@@ -20,6 +20,23 @@ const waitForElement = (selector) => {
   });
 };
 
+function add_symbol(image) {
+    var symbol = document.createElement("img")
+    symbol.id = 'monetization_symbol'
+    var eow_title = document.getElementById('eow-title')
+    var watch_title_container = document.querySelector('#watch-headline-title > h1')
+    var old_title = eow_title.textContent
+
+    if (image == 'monetized') {
+        symbol.src = chrome.extension.getURL('icons/monetized.png')
+        symbol.title = 'This video is monetized'
+    } else {
+        symbol.src = chrome.extension.getURL('icons/demonetized.png')
+        symbol.title = 'This video is not monitized or demonetized'
+    }
+
+    watch_title_container.insertAdjacentElement('afterbegin', symbol)
+}
 //#endregion
 
 //#region Check for valid URL function
@@ -68,7 +85,7 @@ function getDataOnFirstLoad(urlType) {
     
     if(isMonetized !== 'true'){
 
-      var matches = document.body.innerHTML.match(searchPattern)
+      var matches = document.body.innerHTML.match(YOUTUBE_AD_REGEX)
 
       if (matches === null ) {
           isMonetized = document.documentElement.innerHTML.includes(`[{"key":"yt_ad","value":"`) ? document.documentElement.innerHTML.split(`[{"key":"yt_ad","value":"`)[1].split(`"},`)[0] == '1' ? true : false : false
