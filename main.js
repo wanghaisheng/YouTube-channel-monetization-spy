@@ -28,6 +28,10 @@ const checkForValidURL = (url) => {
 }
 //#endregion
 
+const YOUTUBE_AD_REGEX = /(doubleclick\.net)|(adservice\.google\.)|(youtube\.com\/api\/stats\/ads)|(&ad_type=)|(&adurl=)|(-pagead-id.)|(doubleclick\.com)|(\/ad_status.)|(\/api\/ads\/)|(\/googleads)|(\/pagead\/gen_)|(\/pagead\/lvz?)|(\/pubads.)|(\/pubads_)|(\/securepubads)|(=adunit&)|(googlesyndication\.com)|(innovid\.com)|(youtube\.com\/pagead\/)|(google\.com\/pagead\/)|(flashtalking\.com)|(googleadservices\.com)|(s0\.2mdn\.net\/ads)|(www\.youtube\.com\/ptracking)|(www\.youtube\.com\/pagead)|(www\.youtube\.com\/get_midroll_)/;
+
+
+
 //#region Get URL Type function
 const getURLType = (url) => {
   if (url.includes("/channel/")) return "channel";
@@ -46,21 +50,42 @@ function capitalizeFirstLetter(string) {
 var monetized = (type) => `<div style='font-size:13px; margin-top:2px; color: #4CBB17;'>${type} is monetized</div>`;
 var notMonetized = (type) => `<div style='font-size:13px; margin-top:2px; color: #D22B2B;'>${type} is not monetized</div>`;
 var loadingMonetizationStatus = () => `<div style='font-size:13px; margin-top:2px; color: #FFFF00;'>Loading monetization data...</div>`;
-var failedToLoad = () => `<div style='font-size:13px; margin-top:2px; color: #D22B2B;'>Failed to gather monetization data! Please report this.</div>`;
+var failedToLoad = () => `<div style='font-size:13px; margin-top:2px; color: #D22B2B;'>Refresh page again.Failed to gather monetization data! </div>`;
+var reportIssue = () => `<div style='font-size:13px; margin-top:2px; color: #D22B2B;'>Failed to gather monetization data! if you still see this ,Please report this <p><a href="https://ujohw70b1e.feishu.cn/base/CGzqbYlkyaGi9DslDS1cy80vnqe">here !</a></p>.</div>`;
+
 
 var currentURL = window.location.href.split("?")[0].split("#")[0]
-
 function getDataOnFirstLoad(urlType) {
-  if (urlType == 'channel') {
-    document.querySelector("#videos-count").insertAdjacentHTML('afterEnd', `<div class='channelMonetization'>${loadingMonetizationStatus()}</div>`)
+   document.querySelector("#videos-count").insertAdjacentHTML('afterEnd', `<div class='channelMonetization'>${loadingMonetizationStatus()}</div>`)
 
-    let isMonetized = document.documentElement.innerHTML.split(`{"key":"is_monetization_enabled","value":"`)[1].split(`"},`)[0]
+  let isMonetized = document.documentElement.innerHTML.split(`{"key":"is_monetization_enabled","value":"`)[1].split(`"},`)[0]  
+  if (urlType == 'channel') {
+
   
     return document.querySelector(".channelMonetization").innerHTML = isMonetized == 'true' ? monetized("Channel") : notMonetized("Channel");
   } else {
     document.querySelector("h1.style-scope.ytd-watch-metadata").insertAdjacentHTML('afterEnd', `<div class='videoMonetization'>${loadingMonetizationStatus()}</div>`)
+    
+    if(isMonetized !== 'true'){
 
-    let isMonetized = document.documentElement.innerHTML.includes(`[{"key":"yt_ad","value":"`) ? document.documentElement.innerHTML.split(`[{"key":"yt_ad","value":"`)[1].split(`"},`)[0] == '1' ? true : false : false
+      var matches = document.body.innerHTML.match(searchPattern)
+
+      if (matches === null ) {
+          isMonetized = document.documentElement.innerHTML.includes(`[{"key":"yt_ad","value":"`) ? document.documentElement.innerHTML.split(`[{"key":"yt_ad","value":"`)[1].split(`"},`)[0] == '1' ? true : false : false
+           if(isMonetized !== 'true'){
+            isMonetized == 'false'
+           }
+            else{
+              isMonetized == 'true'
+            }
+        
+      } else {
+          isMonetized == 'true'
+      }      
+      
+
+    
+    }
   
     return document.querySelector(".videoMonetization").innerHTML = isMonetized ? monetized("Video") : notMonetized("Video");
   }
@@ -123,7 +148,7 @@ setInterval(async () => {
     const element = await waitForElement(urlType == 'channel' ? ".channelMonetization" : ".videoMonetization");
     if (!element) return;
 
-    return element.innerHTML = failedToLoad();
+    return element.innerHTML = reportIssue();
   }
 
 }, 250)
