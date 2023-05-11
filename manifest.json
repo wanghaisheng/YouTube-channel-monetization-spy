@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YouTube channel monetization detector and checker",
+  "name": "YouTube channel monetization detector and checker By Tiktoka Studio",
   "version": "0.1.0",
-  "description": "Displays information about YouTube Channel being monetized or not monetized. Support YouTube channel and video page.",
+  "description": "Displays information about YouTube Channel being monetized or not monetized. Support YouTube channel and video page. \nfor video page the rules are check whether yt_ad,is_monetization_enabled and other ads elements exist.\nContact us to contribute more precise rules. Click to leave your comments or advice here:https://ujohw70b1e.feishu.cn/base/CGzqbYlkyaGi9DslDS1cy80vnqe</a>",
   "icons": {
     "128": "icon128.png"
   },

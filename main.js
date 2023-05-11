@@ -73,19 +73,20 @@ var reportIssue = () => `<div style='font-size:13px; margin-top:2px; color: #D22
 
 var currentURL = window.location.href.split("?")[0].split("#")[0]
 function getDataOnFirstLoad(urlType) {
-   document.querySelector("#videos-count").insertAdjacentHTML('afterEnd', `<div class='channelMonetization'>${loadingMonetizationStatus()}</div>`)
 
-  let isMonetized = document.documentElement.innerHTML.split(`{"key":"is_monetization_enabled","value":"`)[1].split(`"},`)[0]  
   if (urlType == 'channel') {
+    let isMonetized = document.documentElement.innerHTML.split(`{"key":"is_monetization_enabled","value":"`)[1].split(`"},`)[0]  
 
-  
+    document.querySelector("#videos-count").insertAdjacentHTML('afterEnd', `<div class='channelMonetization'>First loading~~~~ ${loadingMonetizationStatus()}</div>`)
+
     return document.querySelector(".channelMonetization").innerHTML = isMonetized == 'true' ? monetized("Channel") : notMonetized("Channel");
   } else {
-    document.querySelector("h1.style-scope.ytd-watch-metadata").insertAdjacentHTML('afterEnd', `<div class='videoMonetization'>${loadingMonetizationStatus()}</div>`)
-    
-    if(isMonetized !== 'true'){
+    document.querySelector("h1.style-scope.ytd-watch-metadata").insertAdjacentHTML('afterEnd', `<div class='videoMonetization'>First loading~~~~ ${loadingMonetizationStatus()}</div>`)
+    isMonetized = document.documentElement.innerHTML.includes(`[{"key":"is_monetization_enabled","value":"`) ? document.documentElement.innerHTML.split(`[{"key":"is_monetization_enabled","value":"`)[1].split(`"},`)[0] == 'true' ? true : false : false
 
-      var matches = document.body.innerHTML.match(YOUTUBE_AD_REGEX)
+    if(isMonetized == 'false'){
+
+      var matches = document.documentElement.innerHTML.match(YOUTUBE_AD_REGEX)
 
       if (matches === null ) {
           isMonetized = document.documentElement.innerHTML.includes(`[{"key":"yt_ad","value":"`) ? document.documentElement.innerHTML.split(`[{"key":"yt_ad","value":"`)[1].split(`"},`)[0] == '1' ? true : false : false
@@ -120,7 +121,7 @@ window.onload = function () {
   });
 };
 
-setInterval(async () => {
+sh=setInterval(async () => {
 
   if (currentURL == window.location.href.split("?")[0].split("#")[0]) return;
   if (!checkForValidURL(window.location.href)) return;
@@ -155,7 +156,28 @@ setInterval(async () => {
     console.log(urlType)
 
     let isMonetized = urlType == 'channel' ? res.split(`{"key":"is_monetization_enabled","value":"`)[1].split(`"},`)[0] == 'true' ? true : false : res.includes(`[{"key":"yt_ad","value":"`) ? res.split(`[{"key":"yt_ad","value":"`)[1].split(`"},`)[0] == '1' ? true : false : false
+    if(isMonetized == 'false'){
 
+      var matches = document.documentElement.innerHTML.match(YOUTUBE_AD_REGEX)
+
+      if (matches === null ) {
+          isMonetized = document.documentElement.innerHTML.includes(`[{"key":"yt_ad","value":"`) ? document.documentElement.innerHTML.split(`[{"key":"yt_ad","value":"`)[1].split(`"},`)[0] == '1' ? true : false : false
+           if(isMonetized !== 'true'){
+            isMonetized == 'false'
+           }
+            else{
+              isMonetized == 'true'
+            }
+        
+      } else {
+          isMonetized == 'true'
+      }      
+      
+
+    
+    }
+
+    
     element.innerHTML = isMonetized ? monetized(capitalizeFirstLetter(urlType)) : notMonetized(capitalizeFirstLetter(urlType));
 
   } catch (e) {
@@ -169,3 +191,4 @@ setInterval(async () => {
   }
 
 }, 250)
+clearInterval(sh);
